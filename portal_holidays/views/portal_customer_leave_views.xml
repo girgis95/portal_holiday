@@ -1,0 +1,129 @@
+<odoo>
+    <data>
+
+        <template id="portal_my_home_leaves" name="Show Leaves" inherit_id="portal.portal_my_home" priority="30">
+            <xpath expr="//div[@id='portal_common_category']" position="inside">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Holidays</t>
+                    <t t-set="text">Show Holidays</t>
+                    <t t-set="url" t-value="'/my/leaves'"/>
+                    <t t-set="count" t-value="leave_count"/>
+                    <t t-set="config_card" t-value="True"/>
+                </t>
+            </xpath>
+        </template>
+
+        <template id="portal_my_leaves_list" name="My Leaves">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <div class="container my-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3>Your Holidays</h3>
+                        <a href="/my/leaves/new" class="btn btn-primary">New Holiday</a>
+                    </div>
+
+                    <t t-if="not leaves">
+                        <div class="alert alert-info mt-3">No Holidays</div>
+                    </t>
+                    <t t-if="leaves">
+                        <table class="table table-hover mt-3 bg-white shadow-sm rounded">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Holiday Type</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="leaves" t-as="leave">
+                                    <tr>
+                                        <td>
+                                            <span t-field="leave.holiday_status_id.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="leave.date_from" t-options='{"widget": "date"}'/>
+                                        </td>
+                                        <td>
+                                            <span t-field="leave.date_to" t-options='{"widget": "date"}'/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="int(leave.number_of_days)"/> Day
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                </div>
+            </t>
+        </template>
+
+        <template id="portal_my_leave_new" name="New Holiday Request">
+            <t t-call="portal.portal_layout">
+                <t t-set="breadcrumbs_searchbar" t-value="True"/>
+                <div class="container my-4">
+                    <h3>New Holiday Request</h3>
+
+                    <t t-if="error">
+                        <div class="alert alert-danger">
+                            <t t-esc="error"/>
+                        </div>
+                    </t>
+                    <t t-if="warning">
+                        <div class="alert alert-warning">
+                            <t t-esc="warning"/>
+                        </div>
+                    </t>
+                    <t t-if="remaining is not None">
+                        <div class="alert alert-info">Availabity Days for this type is
+                            <t t-esc="remaining"/>
+                            Day
+                        </div>
+                    </t>
+
+                    <form method="GET" action="/my/leaves/new">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                        <div class="form-group">
+                            <label for="holiday_status_id">Holiday Type</label>
+                            <select name="holiday_status_id" id="holiday_status_id" class="form-control"
+                                    onchange="this.form.submit()" required="required">
+                                <option value="">Select Type</option>
+                                <t t-foreach="leave_types" t-as="lt">
+                                    <option t-att-value="lt.id"
+                                            t-att-selected="default_leave_type_id and lt.id == int(default_leave_type_id)">
+                                        <t t-esc="lt.name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+
+                        <div class="form-row mt-2">
+                            <div class="col form-group">
+                                <label for="date_from">From</label>
+                                <input type="date" name="date_from" class="form-control"
+                                       t-att-value="default_date_from" required="required"/>
+                            </div>
+                            <div class="col form-group">
+                                <label for="date_to">To</label>
+                                <input type="date" name="date_to" class="form-control"
+                                       t-att-value="default_date_to" required="required"/>
+                            </div>
+                        </div>
+
+                        <t t-if="remaining is not None and not warning">
+                            <button type="submit" formaction="/my/leaves/submit" formmethod="POST"
+                                    class="btn btn-primary mt-3">
+                                Submit request
+                            </button>
+                        </t>
+
+                        <a href="/my/leaves" class="btn btn-link mt-3">Cancel</a>
+                    </form>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>
