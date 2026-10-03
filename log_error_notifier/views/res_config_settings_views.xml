@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.log.error.notifier</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Log Alerts" string="Log Alerts" name="log_error_notifier" groups="base.group_system">
+                    <block title="Log Scanner" name="log_error_scanner_block">
+                        <setting string="Log File" help="Set by 'logfile' in the server configuration file. Nothing is scanned when Odoo logs to stdout/journald.">
+                            <field name="log_error_logfile" readonly="1"/>
+                            <div class="text-warning" invisible="log_error_logfile">No log file configured on this server.</div>
+                        </setting>
+                        <setting string="Capture Level" help="Minimum level read from the log file.">
+                            <field name="log_error_min_level"/>
+                        </setting>
+                        <setting string="Scope" help="Which databases' entries are reported (the log file is shared by all databases of the server).">
+                            <field name="log_error_scope"/>
+                        </setting>
+                        <setting string="Cooldown" help="The same error is notified at most once per cooldown; occurrences in between are counted.">
+                            <field name="log_error_cooldown_minutes"/>
+                        </setting>
+                        <setting string="Excluded Loggers" help="Comma separated logger prefixes to ignore, e.g. odoo.addons.website,werkzeug">
+                            <field name="log_error_excluded_loggers"/>
+                        </setting>
+                        <setting string="Performance" help="Bytes read per run; larger backlogs are skipped to keep each run short.">
+                            <div class="row mt-2">
+                                <label for="log_error_max_kb_per_run" class="col-lg-5 o_light_label"/>
+                                <field name="log_error_max_kb_per_run"/>
+                            </div>
+                            <div class="row">
+                                <label for="log_error_retention_days" class="col-lg-5 o_light_label"/>
+                                <field name="log_error_retention_days"/>
+                            </div>
+                        </setting>
+                        <setting string="Channels" help="Email recipients and Microsoft Teams webhooks.">
+                            <button name="%(log_error_notifier.action_log_error_channel)d" type="action"
+                                    string="Notification Channels" icon="oi-arrow-right" class="btn-link"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_log_error_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'log_error_notifier', 'bin_size': False}</field>
+    </record>
+</odoo>

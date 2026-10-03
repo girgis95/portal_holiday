@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_log_error_root" name="Log Alerts"
+              parent="base.menu_custom" sequence="200" groups="base.group_system"/>
+    <menuitem id="menu_log_error_event" name="Log Errors"
+              parent="menu_log_error_root" action="action_log_error_event" sequence="10"/>
+    <menuitem id="menu_log_error_channel" name="Notification Channels"
+              parent="menu_log_error_root" action="action_log_error_channel" sequence="20"/>
+    <menuitem id="menu_log_error_settings" name="Settings"
+              parent="menu_log_error_root" action="action_log_error_settings" sequence="30"/>
+</odoo>

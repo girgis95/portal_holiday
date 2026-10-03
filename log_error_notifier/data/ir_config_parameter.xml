@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- initial values; a missing parameter means 0 (Settings deletes parameters set to 0) -->
+    <data noupdate="1">
+        <record id="param_cooldown_minutes" model="ir.config_parameter">
+            <field name="key">log_error_notifier.cooldown_minutes</field>
+            <field name="value">60</field>
+        </record>
+        <record id="param_retention_days" model="ir.config_parameter">
+            <field name="key">log_error_notifier.retention_days</field>
+            <field name="value">30</field>
+        </record>
+    </data>
+</odoo>

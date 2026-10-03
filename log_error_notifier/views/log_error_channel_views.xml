@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_log_error_channel_list" model="ir.ui.view">
+        <field name="name">log.error.channel.list</field>
+        <field name="model">log.error.channel</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="channel_type"/>
+                <field name="min_level"/>
+                <field name="email_to" optional="show"/>
+                <field name="last_error" optional="show" decoration-danger="last_error"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_log_error_channel_form" model="ir.ui.view">
+        <field name="name">log.error.channel.form</field>
+        <field name="model">log.error.channel</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_send_test" type="object" string="Send Test" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. IT Team"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="channel_type" widget="radio"/>
+                            <field name="email_to" invisible="channel_type != 'email'" required="channel_type == 'email'"
+                                   placeholder="it@example.com, dev@example.com"/>
+                            <field name="webhook_url" password="True" invisible="channel_type != 'teams'"
+                                   required="channel_type == 'teams'"/>
+                        </group>
+                        <group>
+                            <field name="min_level"/>
+                            <field name="include_traceback"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-danger" role="alert" invisible="not last_error">
+                        <field name="last_error"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_log_error_channel" model="ir.actions.act_window">
+        <field name="name">Notification Channels</field>
+        <field name="res_model">log.error.channel</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add an email or Microsoft Teams channel</p>
+        </field>
+    </record>
+</odoo>

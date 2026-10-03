@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_log_error_event_list" model="ir.ui.view">
+        <field name="name">log.error.event.list</field>
+        <field name="model">log.error.event</field>
+        <field name="arch" type="xml">
+            <list create="0" decoration-danger="level in ('ERROR', 'CRITICAL')" decoration-warning="level == 'WARNING'" decoration-muted="muted">
+                <field name="last_seen"/>
+                <field name="level"/>
+                <field name="name"/>
+                <field name="logger_name" optional="show"/>
+                <field name="db_name" optional="hide"/>
+                <field name="host" optional="hide"/>
+                <field name="occurrence_count" sum="Total"/>
+                <field name="pending_count" optional="show"/>
+                <field name="last_notified" optional="show"/>
+                <field name="muted" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_log_error_event_form" model="ir.ui.view">
+        <field name="name">log.error.event.form</field>
+        <field name="model">log.error.event</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <header>
+                    <button name="action_mute" type="object" string="Mute" invisible="muted"/>
+                    <button name="action_unmute" type="object" string="Unmute" invisible="not muted"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h2><field name="name"/></h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="level"/>
+                            <field name="logger_name"/>
+                            <field name="db_name"/>
+                            <field name="host"/>
+                            <field name="muted" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="first_seen"/>
+                            <field name="last_seen"/>
+                            <field name="last_log_time"/>
+                            <field name="occurrence_count"/>
+                            <field name="pending_count"/>
+                            <field name="last_notified"/>
+                        </group>
+                    </group>
+                    <label for="sample"/>
+                    <field name="sample" widget="code" options="{'mode': 'python'}"/>
+                    <field name="fingerprint" groups="base.group_no_one"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_log_error_event_search" model="ir.ui.view">
+        <field name="name">log.error.event.search</field>
+        <field name="model">log.error.event</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="logger_name"/>
+                <field name="sample"/>
+                <filter name="filter_pending" string="Pending" domain="[('pending_count', '>', 0)]"/>
+                <filter name="filter_muted" string="Muted" domain="[('muted', '=', True)]"/>
+                <separator/>
+                <filter name="filter_error" string="Errors" domain="[('level', 'in', ('ERROR', 'CRITICAL'))]"/>
+                <filter name="filter_warning" string="Warnings" domain="[('level', '=', 'WARNING')]"/>
+                <separator/>
+                <filter name="filter_last_seen" string="Last Seen" date="last_seen"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_level" string="Level" context="{'group_by': 'level'}"/>
+                    <filter name="group_logger" string="Logger" context="{'group_by': 'logger_name'}"/>
+                    <filter name="group_db" string="Database" context="{'group_by': 'db_name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_log_error_event" model="ir.actions.act_window">
+        <field name="name">Log Errors</field>
+        <field name="res_model">log.error.event</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No errors captured yet</p>
+            <p>Errors found in the server log file appear here every few minutes.</p>
+        </field>
+    </record>
+</odoo>
